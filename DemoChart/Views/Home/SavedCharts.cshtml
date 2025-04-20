@@ -1,0 +1,79 @@
+﻿@model List<DemoChart.Models.SavedChartModel>
+@{
+    ViewData["Title"] = "Biểu đồ đã lưu";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h4>Biểu đồ đã lưu</h4>
+            <a asp-action="Index" class="btn btn-light">Tạo biểu đồ mới</a>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên biểu đồ</th>
+                                <th>Loại biểu đồ</th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var chart in Model)
+                            {
+                                <tr>
+                                    <td>@chart.Id</td>
+                                    <td>@chart.Name</td>
+                                    <td>
+                                        @{
+                                            var chartTypeName = chart.ChartType switch
+                                            {
+                                                "bar" => "Biểu đồ cột",
+                                                "line" => "Biểu đồ đường",
+                                                "pie" => "Biểu đồ tròn",
+                                                "doughnut" => "Biểu đồ tròn có lỗ",
+                                                "radar" => "Biểu đồ radar",
+                                                "polarArea" => "Biểu đồ cực",
+                                                "bubble" => "Biểu đồ bong bóng",
+                                                "scatter" => "Biểu đồ phân tán",
+                                                _ => chart.ChartType
+                                            };
+                                        }
+                                        @chartTypeName
+                                    </td>
+                                    <td>@chart.CreateAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="LoadChart" asp-route-id="@chart.Id" class="btn btn-sm btn-primary">Xem/Sửa</a>
+                                            <a asp-action="DeleteChart" asp-route-id="@chart.Id" class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa biểu đồ này?');">Xóa</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    Bạn chưa lưu biểu đồ nào. <a asp-action="Index">Tạo biểu đồ mới</a> ngay bây giờ!
+                </div>
+            }
+        </div>
+    </div>
+</div>
